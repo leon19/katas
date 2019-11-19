@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+
+import sys
+
+
+def main(name):
+    # You can use `input('> ')` to get the user input
+    # You can use `print()` to print values in the console
+    pass
+
+
+if __name__ == '__main__':
+    main(sys.argv[1])
