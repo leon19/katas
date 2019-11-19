@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app.messages import get_message_by_time
+from app.palindrome import is_palindrome
 from app.reverser import reverse
 
 
@@ -15,5 +16,11 @@ class App:
     def ask_for_input(self) -> str:
         return input('> ')
 
-    def print_reversed(self, user_input: str) -> str:
+    def print_reversed(self, user_input: str) -> None:
         print(reverse(user_input))
+
+    def show_palindrome_message_if_needed(self, user_input: str) -> None:
+        if not is_palindrome(user_input):
+            return
+
+        print('¡Bonita palabra!')

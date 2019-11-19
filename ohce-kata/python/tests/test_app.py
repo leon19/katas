@@ -50,3 +50,35 @@ def test_print_reversed(mocked_reverse: MagicMock, mocked_print: MagicMock):
 
     mocked_reverse.assert_called_with(text)
     mocked_print.assert_called_with(reversed_text)
+
+
+@patch('builtins.print')
+@patch('app.app.is_palindrome', return_value=True)
+def test_app_show_palindrome_message_is_needed_should_show_message_when_the_input_is_palindrome(
+    mocked_is_palindrome: MagicMock,
+    mocked_print: MagicMock):
+    user_input = ''
+    name = 'Lorens'
+    date = datetime.now()
+
+    app = App(name, date)
+    app.show_palindrome_message_if_needed(user_input)
+
+    mocked_is_palindrome.assert_called_with(user_input)
+    mocked_print.assert_called_with('¡Bonita palabra!')
+
+
+@patch('builtins.print')
+@patch('app.app.is_palindrome', return_value=False)
+def test_app_show_palindrome_message_is_needed_should_not_show_any_message_when_the_input_is_not_a_palindrome(
+    mocked_is_palindrome: MagicMock,
+    mocked_print: MagicMock):
+    user_input = ''
+    name = 'Lorens'
+    date = datetime.now()
+
+    app = App(name, date)
+    app.show_palindrome_message_if_needed(user_input)
+
+    mocked_is_palindrome.assert_called_with(user_input)
+    assert mocked_print.call_count == 0

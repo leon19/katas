@@ -17,6 +17,7 @@ def main(name):
     while True:
         user_input = app.ask_for_input()
         app.print_reversed(user_input)
+        app.show_palindrome_message_if_needed(user_input)
 
 
 if __name__ == '__main__':
