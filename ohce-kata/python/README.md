@@ -16,6 +16,20 @@ A pesar de ser una aplicación sencilla `ohce` sabe hacer lo siguiente:
 
 Este es un ejemplo de usar `ohce` (por la mañana):
 
+    * Entre las **6.00** y las **12.00**, `ohce` te dará la bienvenida diciendo **¡Buenos días [nombre]!**
+    * Entra las **12.00** y las **20.00**, `ohce` te dará la bienvenida diciendo **¡Buenas tardes [nombre]!**
+    * Entre las **20.00** y las **6.00**, `ohce` te dará la bienvenida diciendo **¡Buenas noches [nombre]!**
+
+2. Cuando los datos que se introducen son un palíndromo, a `ohce` le gustará y además de mostrar en pantalla dándole la 
+   vuelta también mostrará el mensaje **¡Bonita palabra!**
+
+3. `ohce` sabe cuando debe detener la aplicación, solo debes escribir **Stop!**, y la aplicación responderá **¡Adiós! [name]**
+
+
+
+Este es un ejemplo de usar `ohce` por la mañana:
+
+
 ```sh
 $ ./ohce Lorens
 > ¡Buenos días Lorens!
