@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 
 import sys
+from datetime import datetime
+
+from app.app import App
 
 
 def main(name):
     # You can use `input('> ')` to get the user input
     # You can use `print()` to print values in the console
-    pass
+    date = datetime.now()
+    app = App(name, date)
+
+    app.show_greeting_message()
 
 
 if __name__ == '__main__':
