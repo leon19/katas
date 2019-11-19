@@ -11,3 +11,7 @@ def is_morning(date: datetime) -> bool:
 
 def is_evening(date: datetime) -> bool:
     return TWELVE_PM <= date.hour < EIGHT_PM
+
+
+def is_night(date: datetime) -> bool:
+    return date.hour >= EIGHT_PM or date.hour < SIX_AM
