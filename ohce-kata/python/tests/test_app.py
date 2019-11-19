@@ -18,3 +18,18 @@ def test_app_show_greeting_message(mocked_get_message_by_time: MagicMock, mocked
 
     mocked_get_message_by_time.assert_called_with(date, name)
     mocked_print.assert_called_with(expected_message)
+
+
+@patch('builtins.input')
+def test_app_ask_for_input(mocked_input):
+    name = 'Lorens'
+    date = datetime.now()
+
+    expected_input = ''
+    mocked_input.return_value = expected_input
+
+    app = App(name, date)
+    user_input = app.ask_for_input()
+
+    mocked_input.assert_called_with('> ')
+    assert user_input == expected_input

@@ -10,3 +10,6 @@ class App:
 
     def show_greeting_message(self) -> None:
         print(get_message_by_time(self._date, self._name))
+
+    def ask_for_input(self) -> str:
+        return input('> ')
