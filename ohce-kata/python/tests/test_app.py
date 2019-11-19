@@ -1,7 +1,7 @@
 from datetime import datetime
 from unittest.mock import patch, MagicMock
 
-from app.app import App
+from app.app import App, STOP_MESSAGE, PALINDROME_MESSAGE
 
 
 @patch('builtins.print')
@@ -65,7 +65,7 @@ def test_app_show_palindrome_message_is_needed_should_show_message_when_the_inpu
     app.show_palindrome_message_if_needed(user_input)
 
     mocked_is_palindrome.assert_called_with(user_input)
-    mocked_print.assert_called_with('¡Bonita palabra!')
+    mocked_print.assert_called_with(PALINDROME_MESSAGE)
 
 
 @patch('builtins.print')
@@ -82,3 +82,32 @@ def test_app_show_palindrome_message_is_needed_should_not_show_any_message_when_
 
     mocked_is_palindrome.assert_called_with(user_input)
     assert mocked_print.call_count == 0
+
+
+def test_app_is_stop_message_should_return_true_when_the_message_is_the_correct_stop_message():
+    name = 'Lorens'
+    date = datetime.now()
+
+    app = App(name, date)
+
+    assert app.is_stop_message(STOP_MESSAGE) is True
+
+
+def test_app_is_stop_message_should_return_false_when_the_message_is_not_the_correct_stop_message():
+    name = 'Lorens'
+    date = datetime.now()
+
+    app = App(name, date)
+
+    assert app.is_stop_message('some random message') is False
+
+
+@patch('builtins.print')
+def test_app_show_farewell_message(mocked_print):
+    name = 'Lorens'
+    date = datetime.now()
+
+    app = App(name, date)
+    app.show_farewell_message()
+
+    mocked_print.assert_called_with(f"¡Adiós {name}!")

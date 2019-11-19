@@ -4,6 +4,9 @@ from app.messages import get_message_by_time
 from app.palindrome import is_palindrome
 from app.reverser import reverse
 
+PALINDROME_MESSAGE = '¡Bonita palabra!'
+STOP_MESSAGE = 'Stop!'
+
 
 class App:
     def __init__(self, name: str, date: datetime) -> None:
@@ -23,4 +26,10 @@ class App:
         if not is_palindrome(user_input):
             return
 
-        print('¡Bonita palabra!')
+        print(PALINDROME_MESSAGE)
+
+    def is_stop_message(self, user_input: str) -> bool:
+        return user_input == STOP_MESSAGE
+
+    def show_farewell_message(self):
+        print(f"¡Adiós {self._name}!")
