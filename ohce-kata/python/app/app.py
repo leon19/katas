@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app.messages import get_message_by_time
+from app.reverser import reverse
 
 
 class App:
@@ -13,3 +14,6 @@ class App:
 
     def ask_for_input(self) -> str:
         return input('> ')
+
+    def print_reversed(self, user_input: str) -> str:
+        print(reverse(user_input))

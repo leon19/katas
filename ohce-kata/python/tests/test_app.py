@@ -33,3 +33,20 @@ def test_app_ask_for_input(mocked_input):
 
     mocked_input.assert_called_with('> ')
     assert user_input == expected_input
+
+
+@patch('builtins.print')
+@patch('app.app.reverse')
+def test_print_reversed(mocked_reverse: MagicMock, mocked_print: MagicMock):
+    text = 'echo'
+    reversed_text = 'ohce'
+    name = 'Lorens'
+    date = datetime.now()
+
+    mocked_reverse.return_value = reversed_text
+    app = App(name, date)
+
+    app.print_reversed(text)
+
+    mocked_reverse.assert_called_with(text)
+    mocked_print.assert_called_with(reversed_text)

@@ -14,7 +14,9 @@ def main(name):
 
     app.show_greeting_message()
 
-    user_input = app.ask_for_input()
+    while True:
+        user_input = app.ask_for_input()
+        app.print_reversed(user_input)
 
 
 if __name__ == '__main__':
