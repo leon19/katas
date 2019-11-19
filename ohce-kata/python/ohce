@@ -12,18 +12,11 @@ def main(name):
     date = datetime.now()
     app = App(name, date)
 
-    app.show_greeting_message()
+    app.start()
 
-    while True:
-        user_input = app.ask_for_input()
-
-        if app.is_stop_message(user_input):
-            app.show_farewell_message()
-            exit()
-
-        app.print_reversed(user_input)
-        app.show_palindrome_message_if_needed(user_input)
-
+    while app.is_running():
+        user_input = input('> ')
+        app.handle_message(user_input)
 
 
 if __name__ == '__main__':

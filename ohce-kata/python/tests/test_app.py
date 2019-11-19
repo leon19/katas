@@ -1,113 +1,128 @@
 from datetime import datetime
 from unittest.mock import patch, MagicMock
 
-from app.app import App, STOP_MESSAGE, PALINDROME_MESSAGE
+from pytest import raises
+
+from app.app import App
+from app.messages import STOP_MESSAGE
 
 
-@patch('builtins.print')
-@patch('app.app.get_message_by_time')
-def test_app_show_greeting_message(mocked_get_message_by_time: MagicMock, mocked_print: MagicMock):
-    name = 'Lorens'
-    date = datetime.now()
-
-    expected_message = ''
-    mocked_get_message_by_time.return_value = expected_message
-
-    app = App(name, date)
-    app.show_greeting_message()
-
-    mocked_get_message_by_time.assert_called_with(date, name)
-    mocked_print.assert_called_with(expected_message)
-
-
-@patch('builtins.input')
-def test_app_ask_for_input(mocked_input):
-    name = 'Lorens'
-    date = datetime.now()
-
-    expected_input = ''
-    mocked_input.return_value = expected_input
-
-    app = App(name, date)
-    user_input = app.ask_for_input()
-
-    mocked_input.assert_called_with('> ')
-    assert user_input == expected_input
-
-
-@patch('builtins.print')
-@patch('app.app.reverse')
-def test_print_reversed(mocked_reverse: MagicMock, mocked_print: MagicMock):
-    text = 'echo'
-    reversed_text = 'ohce'
-    name = 'Lorens'
-    date = datetime.now()
-
-    mocked_reverse.return_value = reversed_text
-    app = App(name, date)
-
-    app.print_reversed(text)
-
-    mocked_reverse.assert_called_with(text)
-    mocked_print.assert_called_with(reversed_text)
-
-
-@patch('builtins.print')
-@patch('app.app.is_palindrome', return_value=True)
-def test_app_show_palindrome_message_is_needed_should_show_message_when_the_input_is_palindrome(
-    mocked_is_palindrome: MagicMock,
-    mocked_print: MagicMock):
-    user_input = ''
+@patch('app.app.show_greeting_message')
+def test_app_start_should_run_and_show_the_greeting_message(mocked_show_greeting_message: MagicMock):
     name = 'Lorens'
     date = datetime.now()
 
     app = App(name, date)
-    app.show_palindrome_message_if_needed(user_input)
+    app.start()
 
-    mocked_is_palindrome.assert_called_with(user_input)
-    mocked_print.assert_called_with(PALINDROME_MESSAGE)
+    mocked_show_greeting_message.assert_called_with(name, date)
+    assert app.is_running() is True
 
 
-@patch('builtins.print')
-@patch('app.app.is_palindrome', return_value=False)
-def test_app_show_palindrome_message_is_needed_should_not_show_any_message_when_the_input_is_not_a_palindrome(
-    mocked_is_palindrome: MagicMock,
-    mocked_print: MagicMock):
-    user_input = ''
+@patch('app.app.show_greeting_message')
+@patch('app.app.show_farewell_message')
+def test_app_stop_should_stop_and_show_the_farewell_message(
+    mocked_show_farewell_message: MagicMock,
+    mocked_show_greeting_message: MagicMock
+):
     name = 'Lorens'
     date = datetime.now()
 
     app = App(name, date)
-    app.show_palindrome_message_if_needed(user_input)
+    app.start()
+    app.stop()
 
-    mocked_is_palindrome.assert_called_with(user_input)
-    assert mocked_print.call_count == 0
+    mocked_show_greeting_message.assert_called_with(name, date)
+    mocked_show_farewell_message.assert_called()
+    assert app.is_running() is False
 
 
-def test_app_is_stop_message_should_return_true_when_the_message_is_the_correct_stop_message():
+def test_app_stop_should_raise_a_runtime_error_when_the_app_is_not_started():
     name = 'Lorens'
     date = datetime.now()
 
     app = App(name, date)
 
-    assert app.is_stop_message(STOP_MESSAGE) is True
+    with raises(RuntimeError):
+        app.stop()
 
 
-def test_app_is_stop_message_should_return_false_when_the_message_is_not_the_correct_stop_message():
+@patch('app.app.show_farewell_message')
+@patch('app.app.show_palindrome_message')
+@patch('app.app.is_palindrome_message')
+@patch('app.app.show_reversed')
+@patch('app.app.is_stop_message', return_value=True)
+def test_app_handle_input_when_a_stop_message_is_given_the_app_should_stop(
+    mocked_is_stop_message: MagicMock,
+    mocked_show_reversed: MagicMock,
+    mocked_is_palindrome_message: MagicMock,
+    mocked_show_palindrome_message: MagicMock,
+    mocked_show_farewell_message: MagicMock
+):
     name = 'Lorens'
     date = datetime.now()
 
     app = App(name, date)
+    app.start()
 
-    assert app.is_stop_message('some random message') is False
+    message = STOP_MESSAGE
+    app.handle_message(message)
+
+    assert app.is_running() is False
+    mocked_is_stop_message.assert_called_with(message)
+    mocked_show_farewell_message.assert_called_with(name)
+
+    mocked_show_reversed.assert_not_called()
+    mocked_is_palindrome_message.assert_not_called()
+    mocked_show_palindrome_message.assert_not_called()
 
 
-@patch('builtins.print')
-def test_app_show_farewell_message(mocked_print):
+@patch('app.app.show_farewell_message')
+@patch('app.app.show_palindrome_message')
+@patch('app.app.is_palindrome_message', return_value=False)
+@patch('app.app.show_reversed')
+@patch('app.app.is_stop_message', return_value=False)
+def test_app_handle_input_when_a_message_is_given_the_app_print_the_reversed_message(
+    mocked_is_stop_message: MagicMock,
+    mocked_show_reversed: MagicMock,
+    mocked_is_palindrome_message: MagicMock,
+    mocked_show_palindrome_message: MagicMock,
+    mocked_show_farewell_message: MagicMock
+):
     name = 'Lorens'
     date = datetime.now()
 
     app = App(name, date)
-    app.show_farewell_message()
+    app.start()
 
-    mocked_print.assert_called_with(f"¡Adiós {name}!")
+    message = 'random message'
+    app.handle_message(message)
+
+    assert app.is_running() is True
+    mocked_show_reversed.assert_called_with(message)
+
+
+@patch('app.app.show_farewell_message')
+@patch('app.app.show_palindrome_message')
+@patch('app.app.is_palindrome_message', return_value=True)
+@patch('app.app.show_reversed')
+@patch('app.app.is_stop_message', return_value=False)
+def test_app_handle_input_when_a_palindrome_message_is_given_the_app_print_the_palindrome_message(
+    mocked_is_stop_message: MagicMock,
+    mocked_show_reversed: MagicMock,
+    mocked_is_palindrome_message: MagicMock,
+    mocked_show_palindrome_message: MagicMock,
+    mocked_show_farewell_message: MagicMock
+):
+    name = 'Lorens'
+    date = datetime.now()
+
+    app = App(name, date)
+    app.start()
+
+    message = 'somos'
+    app.handle_message(message)
+
+    assert app.is_running() is True
+    mocked_is_palindrome_message.assert_called_with(message)
+    mocked_show_palindrome_message.asser_called()
