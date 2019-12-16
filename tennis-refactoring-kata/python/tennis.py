@@ -13,26 +13,50 @@ class TennisGame1:
 
     def score(self):
         if self._is_draw():
-            return {0: "Love-All", 1: "Fifteen-All", 2: "Thirty-All"}.get(self.player_one_points, "Deuce")
+            return self._get_draw_message()
 
-        if self.player_one_points >= 4 or self.player_two_points >= 4:
-            minus_result = self.player_one_points - self.player_two_points
+        if self._player_one_has_advantage():
+            return self._get_advantage_message(self.player_one_name)
 
-            if minus_result == 1:
-                return self._get_advantage_message(self.player_one_name)
+        if self._player_two_has_advantage():
+            return self._get_advantage_message(self.player_two_name)
 
-            if minus_result == -1:
-                return self._get_advantage_message(self.player_two_name)
+        if self._player_one_has_won():
+            return self._get_win_message(self.player_one_name)
 
-            if minus_result >= 2:
-                return self._get_win_message(self.player_one_name)
-
+        if self._player_two_has_won():
             return self._get_win_message(self.player_two_name)
 
+        return self._get_score_message()
+
+    def _get_score_message(self):
         player_one_score = self._get_player_score(self.player_one_points)
         player_two_score = self._get_player_score(self.player_two_points)
 
         return f"{player_one_score}-{player_two_score}"
+
+    def _is_last_point(self):
+        return self.player_one_points >= 4 or self.player_two_points >= 4
+
+    def _get_draw_message(self):
+        if self.player_one_points >= 3:
+            return "Deuce"
+
+        score = self._get_player_score(self.player_one_points)
+
+        return f"{score}-All"
+
+    def _player_one_has_won(self):
+        return self._is_last_point() and self.player_one_points - self.player_two_points >= 2
+
+    def _player_two_has_won(self):
+        return self._is_last_point() and self.player_two_points - self.player_one_points >= 2
+
+    def _player_one_has_advantage(self):
+        return self._is_last_point() and self.player_one_points - self.player_two_points == 1
+
+    def _player_two_has_advantage(self):
+        return self._is_last_point() and self.player_two_points - self.player_one_points == 1
 
     def _is_draw(self):
         return self.player_one_points == self.player_two_points
