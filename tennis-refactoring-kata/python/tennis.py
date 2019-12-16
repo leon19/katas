@@ -1,3 +1,36 @@
+class Player:
+    ONE_POINT = 1
+    TWO_POINTS = 2
+    FOUR_POINTS = 4
+
+    def __init__(self, name):
+        self._name = name
+        self._points = 0
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def points(self):
+        return self._points
+
+    def won_point(self):
+        self._points += 1
+
+    def is_tied_with(self, player: "Player") -> bool:
+        return self._points == player._points
+
+    def has_advantage_over(self, player: "Player") -> bool:
+        return (self._is_last_point() or player._is_last_point()) and self._points - player._points == self.ONE_POINT
+
+    def has_won_against(self, player: "Player") -> bool:
+        return self._is_last_point() and self._points - player._points >= self.TWO_POINTS
+
+    def _is_last_point(self):
+        return self._points >= self.FOUR_POINTS
+
+
 class ScoreMessageFactory:
     NO_POINTS = 0
     FIFTEEN_POINTS = 1
@@ -46,53 +79,32 @@ class TennisGame1:
     FOUR_POINTS = 4
 
     def __init__(self, player_one_name, player_two_name):
-        self.player_one_name = player_one_name
-        self.player_two_name = player_two_name
-        self.player_one_points = 0
-        self.player_two_points = 0
         self._messages = ScoreMessageFactory()
 
+        self._player_one = Player(player_one_name)
+        self._player_two = Player(player_two_name)
+        self._players = {player_one_name: self._player_one, player_two_name: self._player_two}
+
     def won_point(self, player_name):
-        if player_name == self.player_one_name:
-            self.player_one_points += 1
-        else:
-            self.player_two_points += 1
+        self._players[player_name].won_point()
 
     def score(self):
-        if self._is_draw():
-            return self._messages.get_draw_message(self.player_one_points)
+        if self._player_one.is_tied_with(self._player_two):
+            return self._messages.get_draw_message(self._player_one.points)
 
-        if self._player_one_has_advantage():
-            return self._messages.get_advantage_message(self.player_one_name)
+        if self._player_one.has_advantage_over(self._player_two):
+            return self._messages.get_advantage_message(self._player_one.name)
 
-        if self._player_two_has_advantage():
-            return self._messages.get_advantage_message(self.player_two_name)
+        if self._player_two.has_advantage_over(self._player_one):
+            return self._messages.get_advantage_message(self._player_two.name)
 
-        if self._player_one_has_won():
-            return self._messages.get_win_message(self.player_one_name)
+        if self._player_one.has_won_against(self._player_two):
+            return self._messages.get_win_message(self._player_one.name)
 
-        if self._player_two_has_won():
-            return self._messages.get_win_message(self.player_two_name)
+        if self._player_two.has_won_against(self._player_one):
+            return self._messages.get_win_message(self._player_two.name)
 
-        return self._messages.get_score_message(self.player_one_points, self.player_two_points)
-
-    def _is_last_point(self):
-        return self.player_one_points >= self.FOUR_POINTS or self.player_two_points >= self.FOUR_POINTS
-
-    def _player_one_has_won(self):
-        return self._is_last_point() and self.player_one_points - self.player_two_points >= self.TWO_POINTS
-
-    def _player_two_has_won(self):
-        return self._is_last_point() and self.player_two_points - self.player_one_points >= self.TWO_POINTS
-
-    def _player_one_has_advantage(self):
-        return self._is_last_point() and self.player_one_points - self.player_two_points == self.ONE_POINT
-
-    def _player_two_has_advantage(self):
-        return self._is_last_point() and self.player_two_points - self.player_one_points == self.ONE_POINT
-
-    def _is_draw(self):
-        return self.player_one_points == self.player_two_points
+        return self._messages.get_score_message(self._player_one.points, self._player_two.points)
 
 
 class TennisGame2:
