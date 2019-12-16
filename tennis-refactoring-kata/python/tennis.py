@@ -1,65 +1,23 @@
-class TennisGame1:
-    def __init__(self, player_one_name, player_two_name):
-        self.player_one_name = player_one_name
-        self.player_two_name = player_two_name
-        self.player_one_points = 0
-        self.player_two_points = 0
-
-    def won_point(self, player_name):
-        if player_name == self.player_one_name:
-            self.player_one_points += 1
-        else:
-            self.player_two_points += 1
-
-    def score(self):
-        if self._is_draw():
-            return self._get_draw_message()
-
-        if self._player_one_has_advantage():
-            return self._get_advantage_message(self.player_one_name)
-
-        if self._player_two_has_advantage():
-            return self._get_advantage_message(self.player_two_name)
-
-        if self._player_one_has_won():
-            return self._get_win_message(self.player_one_name)
-
-        if self._player_two_has_won():
-            return self._get_win_message(self.player_two_name)
-
-        return self._get_score_message()
-
-    def _get_score_message(self):
-        player_one_score = self._get_player_score(self.player_one_points)
-        player_two_score = self._get_player_score(self.player_two_points)
-
-        return f"{player_one_score}-{player_two_score}"
-
-    def _is_last_point(self):
-        return self.player_one_points >= 4 or self.player_two_points >= 4
-
-    def _get_draw_message(self):
-        if self.player_one_points >= 3:
+class ScoreMessageFactory:
+    def get_draw_message(self, points):
+        if points >= 3:
             return "Deuce"
 
-        score = self._get_player_score(self.player_one_points)
+        score = self._get_player_score(points)
 
         return f"{score}-All"
 
-    def _player_one_has_won(self):
-        return self._is_last_point() and self.player_one_points - self.player_two_points >= 2
+    def get_score_message(self, player_one_points, player_two_points):
+        player_one_score = self._get_player_score(player_one_points)
+        player_two_score = self._get_player_score(player_two_points)
 
-    def _player_two_has_won(self):
-        return self._is_last_point() and self.player_two_points - self.player_one_points >= 2
+        return f"{player_one_score}-{player_two_score}"
 
-    def _player_one_has_advantage(self):
-        return self._is_last_point() and self.player_one_points - self.player_two_points == 1
+    def get_advantage_message(self, player_name):
+        return "Advantage " + player_name
 
-    def _player_two_has_advantage(self):
-        return self._is_last_point() and self.player_two_points - self.player_one_points == 1
-
-    def _is_draw(self):
-        return self.player_one_points == self.player_two_points
+    def get_win_message(self, player_name):
+        return "Win for " + player_name
 
     def _get_player_score(self, points):
         if points == 0:
@@ -76,11 +34,56 @@ class TennisGame1:
 
         raise ValueError("Invalid score")
 
-    def _get_advantage_message(self, player_name):
-        return "Advantage " + player_name
 
-    def _get_win_message(self, player_name):
-        return "Win for " + player_name
+class TennisGame1:
+    def __init__(self, player_one_name, player_two_name):
+        self.player_one_name = player_one_name
+        self.player_two_name = player_two_name
+        self.player_one_points = 0
+        self.player_two_points = 0
+        self._messages = ScoreMessageFactory()
+
+    def won_point(self, player_name):
+        if player_name == self.player_one_name:
+            self.player_one_points += 1
+        else:
+            self.player_two_points += 1
+
+    def score(self):
+        if self._is_draw():
+            return self._messages.get_draw_message(self.player_one_points)
+
+        if self._player_one_has_advantage():
+            return self._messages.get_advantage_message(self.player_one_name)
+
+        if self._player_two_has_advantage():
+            return self._messages.get_advantage_message(self.player_two_name)
+
+        if self._player_one_has_won():
+            return self._messages.get_win_message(self.player_one_name)
+
+        if self._player_two_has_won():
+            return self._messages.get_win_message(self.player_two_name)
+
+        return self._messages.get_score_message(self.player_one_points, self.player_two_points)
+
+    def _is_last_point(self):
+        return self.player_one_points >= 4 or self.player_two_points >= 4
+
+    def _player_one_has_won(self):
+        return self._is_last_point() and self.player_one_points - self.player_two_points >= 2
+
+    def _player_two_has_won(self):
+        return self._is_last_point() and self.player_two_points - self.player_one_points >= 2
+
+    def _player_one_has_advantage(self):
+        return self._is_last_point() and self.player_one_points - self.player_two_points == 1
+
+    def _player_two_has_advantage(self):
+        return self._is_last_point() and self.player_two_points - self.player_one_points == 1
+
+    def _is_draw(self):
+        return self.player_one_points == self.player_two_points
 
 
 class TennisGame2:
