@@ -29,16 +29,25 @@ class TennisGame1:
 
             return self._get_win_message(self.player_two_name)
 
-        result = ""
-        for i in range(1, 3):
-            if i == 1:
-                temp_score = self.player_one_points
-            else:
-                result += "-"
-                temp_score = self.player_two_points
-            result += {0: "Love", 1: "Fifteen", 2: "Thirty", 3: "Forty"}[temp_score]
+        player_one_score = self._get_player_score(self.player_one_points)
+        player_two_score = self._get_player_score(self.player_two_points)
 
-        return result
+        return f"{player_one_score}-{player_two_score}"
+
+    def _get_player_score(self, points):
+        if points == 0:
+            return "Love"
+
+        if points == 1:
+            return "Fifteen"
+
+        if points == 2:
+            return "Thirty"
+
+        if points == 3:
+            return "Forty"
+
+        raise ValueError("Invalid score")
 
     def _get_advantage_message(self, player_name):
         return "Advantage " + player_name
