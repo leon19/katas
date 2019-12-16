@@ -12,7 +12,7 @@ class TennisGame1:
             self.player_two_points += 1
 
     def score(self):
-        if self.player_one_points == self.player_two_points:
+        if self._is_draw():
             return {0: "Love-All", 1: "Fifteen-All", 2: "Thirty-All"}.get(self.player_one_points, "Deuce")
 
         if self.player_one_points >= 4 or self.player_two_points >= 4:
@@ -33,6 +33,9 @@ class TennisGame1:
         player_two_score = self._get_player_score(self.player_two_points)
 
         return f"{player_one_score}-{player_two_score}"
+
+    def _is_draw(self):
+        return self.player_one_points == self.player_two_points
 
     def _get_player_score(self, points):
         if points == 0:
