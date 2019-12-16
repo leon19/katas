@@ -19,15 +19,15 @@ class TennisGame1:
             minus_result = self.player_one_points - self.player_two_points
 
             if minus_result == 1:
-                return "Advantage " + self.player_one_name
+                return self._get_advantage_message(self.player_one_name)
 
             if minus_result == -1:
-                return "Advantage " + self.player_two_name
+                return self._get_advantage_message(self.player_two_name)
 
             if minus_result >= 2:
-                return "Win for " + self.player_one_name
+                return self._get_win_message(self.player_one_name)
 
-            return "Win for " + self.player_two_name
+            return self._get_win_message(self.player_two_name)
 
         result = ""
         for i in range(1, 3):
@@ -39,6 +39,12 @@ class TennisGame1:
             result += {0: "Love", 1: "Fifteen", 2: "Thirty", 3: "Forty"}[temp_score]
 
         return result
+
+    def _get_advantage_message(self, player_name):
+        return "Advantage " + player_name
+
+    def _get_win_message(self, player_name):
+        return "Win for " + player_name
 
 
 class TennisGame2:
