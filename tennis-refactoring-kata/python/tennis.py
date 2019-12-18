@@ -1,3 +1,6 @@
+from itertools import permutations
+
+
 class Player:
     ONE_POINT = 1
     TWO_POINTS = 2
@@ -89,20 +92,15 @@ class TennisGame1:
         self._players[player_name].won_point()
 
     def score(self):
-        if self._player_one.is_tied_with(self._player_two):
-            return self._messages.get_draw_message(self._player_one.points)
+        for player, opponent in permutations(self._players.values()):
+            if player.is_tied_with(opponent):
+                return self._messages.get_draw_message(player.points)
 
-        if self._player_one.has_advantage_over(self._player_two):
-            return self._messages.get_advantage_message(self._player_one.name)
+            if player.has_advantage_over(opponent):
+                return self._messages.get_advantage_message(player.name)
 
-        if self._player_two.has_advantage_over(self._player_one):
-            return self._messages.get_advantage_message(self._player_two.name)
-
-        if self._player_one.has_won_against(self._player_two):
-            return self._messages.get_win_message(self._player_one.name)
-
-        if self._player_two.has_won_against(self._player_one):
-            return self._messages.get_win_message(self._player_two.name)
+            if player.has_won_against(opponent):
+                return self._messages.get_win_message(player.name)
 
         return self._messages.get_score_message(self._player_one.points, self._player_two.points)
 
