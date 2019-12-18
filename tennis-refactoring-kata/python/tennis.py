@@ -6,19 +6,19 @@ class Player:
     TWO_POINTS = 2
     FOUR_POINTS = 4
 
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         self._name = name
         self._points = 0
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @property
-    def points(self):
+    def points(self) -> int:
         return self._points
 
-    def won_point(self):
+    def won_point(self) -> None:
         self._points += 1
 
     def is_tied_with(self, player: "Player") -> bool:
@@ -30,7 +30,7 @@ class Player:
     def has_won_against(self, player: "Player") -> bool:
         return self._is_last_point() and self._points - player._points >= self.TWO_POINTS
 
-    def _is_last_point(self):
+    def _is_last_point(self) -> bool:
         return self._points >= self.FOUR_POINTS
 
 
@@ -40,7 +40,7 @@ class ScoreMessageFactory:
     THIRTY_POINTS = 2
     FORTY_POINTS = 3
 
-    def get_draw_message(self, points):
+    def get_draw_message(self, points) -> str:
         if points >= 3:
             return "Deuce"
 
@@ -48,19 +48,19 @@ class ScoreMessageFactory:
 
         return f"{score}-All"
 
-    def get_score_message(self, player_one_points, player_two_points):
+    def get_score_message(self, player_one_points: int, player_two_points: int) -> str:
         player_one_score = self._get_player_score(player_one_points)
         player_two_score = self._get_player_score(player_two_points)
 
         return f"{player_one_score}-{player_two_score}"
 
-    def get_advantage_message(self, player_name):
+    def get_advantage_message(self, player_name: str) -> str:
         return "Advantage " + player_name
 
-    def get_win_message(self, player_name):
+    def get_win_message(self, player_name: str) -> str:
         return "Win for " + player_name
 
-    def _get_player_score(self, points):
+    def _get_player_score(self, points: int) -> str:
         if points == self.NO_POINTS:
             return "Love"
 
@@ -81,17 +81,17 @@ class TennisGame1:
     TWO_POINTS = 2
     FOUR_POINTS = 4
 
-    def __init__(self, player_one_name, player_two_name):
+    def __init__(self, player_one_name: str, player_two_name: str) -> None:
         self._messages = ScoreMessageFactory()
 
         self._player_one = Player(player_one_name)
         self._player_two = Player(player_two_name)
         self._players = {player_one_name: self._player_one, player_two_name: self._player_two}
 
-    def won_point(self, player_name):
+    def won_point(self, player_name: str) -> None:
         self._players[player_name].won_point()
 
-    def score(self):
+    def score(self) -> str:
         for player, opponent in permutations(self._players.values()):
             if player.is_tied_with(opponent):
                 return self._messages.get_draw_message(player.points)
